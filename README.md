@@ -17,7 +17,7 @@ A Node.js client for interacting with the [Captivate.fm](https://www.captivate.f
 ## 📦 Installation
 
 ```bash
-npm install captivate-api-client
+npm install captivate-fm-api-client
 ```
 
 ---
