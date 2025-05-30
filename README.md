@@ -10,6 +10,7 @@ A Node.js client for interacting with the [Captivate.fm](https://www.captivate.f
 - 📤 Upload media files to your shows
 - 🎙️ Create new podcast episodes
 - 📺 List shows and episodes
+- 🎨 Upload artwork
 - ✅ Async/await-ready with clean API
 
 ---
@@ -175,7 +176,6 @@ captivate-api-client/
 
 - [ ] Add support for editing episodes
 - [ ] Add listing media files
-- [ ] Add tests
 
 ---
 

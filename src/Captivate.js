@@ -19,22 +19,6 @@ class Captivate {
     this.apiKey = apiKey;
   }
 
-  async getUserShows() {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `${this.apiBase}/users/${this.userId}/shows`,
-      headers: {},
-    };
-
-    try {
-      const response = await axios(config);
-      return response.data.shows;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   /**
    * Retrieves a list of shows associated with the authenticated user.
    *
@@ -223,6 +207,28 @@ class Captivate {
     try {
       const response = await axios(config);
       this.token = response.data.user.token;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async createShowArtwork(filePath, showId) {
+    const data = new FormData();
+    data.append("file", fs.createReadStream(filePath));
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/shows/${showId}/artwork`,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        ...data.getHeaders(),
+        Authorization: `Bearer ${this.token}`,
+      },
+      data: data,
+    };
+    try {
+      const response = await axios(config);
+      return response.data;
     } catch (error) {
       console.error(error);
     }
