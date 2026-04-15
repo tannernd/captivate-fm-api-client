@@ -92,4 +92,162 @@ describe("Captivate API Client", () => {
     expect(result).toEqual({ artwork: "url/to/art" });
     expect(axios).toHaveBeenCalled();
   });
+
+  // ─── Analytics / Insights ───────────────────────────────────────────
+
+  test("getAnalyticsOverview calls correct endpoint with params", async () => {
+    axios.mockResolvedValue({ data: { overview: "data" } });
+
+    const result = await client.getAnalyticsOverview("show1", "2026-01-01", "2026-01-31");
+
+    expect(result).toEqual({ overview: "data" });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "get",
+        url: expect.stringContaining("/insights/show1/overview"),
+        headers: expect.objectContaining({ Authorization: "Bearer fakeToken" }),
+        params: { start: "2026-01-01", end: "2026-01-31", includeTopEpisodes: true },
+      })
+    );
+  });
+
+  test("getEpisodeAnalyticsOverview calls correct endpoint", async () => {
+    axios.mockResolvedValue({ data: { episode_overview: "data" } });
+
+    const result = await client.getEpisodeAnalyticsOverview("show1", "ep1", "2026-01-01", "2026-01-31");
+
+    expect(result).toEqual({ episode_overview: "data" });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/insights/show1/overview/ep1"),
+      })
+    );
+  });
+
+  test("getAnalyticsAverages calls correct endpoint with interval", async () => {
+    axios.mockResolvedValue({ data: { averages: "data" } });
+
+    const result = await client.getAnalyticsAverages("show1", 14);
+
+    expect(result).toEqual({ averages: "data" });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/insights/show1/averages"),
+        params: { intervalDays: 14 },
+      })
+    );
+  });
+
+  test("getAnalyticsTotal returns all-time total", async () => {
+    axios.mockResolvedValue({ data: { total: 50000 } });
+
+    const result = await client.getAnalyticsTotal("show1");
+
+    expect(result).toEqual({ total: 50000 });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/insights/show1/total"),
+      })
+    );
+  });
+
+  test("getEpisodeAnalyticsTotal returns episode total", async () => {
+    axios.mockResolvedValue({ data: { total: 1200 } });
+
+    const result = await client.getEpisodeAnalyticsTotal("show1", "ep1");
+
+    expect(result).toEqual({ total: 1200 });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/insights/show1/total/ep1"),
+      })
+    );
+  });
+
+  test("getAnalyticsMonthly returns monthly data", async () => {
+    axios.mockResolvedValue({ data: { monthly: { "2026-01": 100 } } });
+
+    const result = await client.getAnalyticsMonthly("show1");
+
+    expect(result).toEqual({ monthly: { "2026-01": 100 } });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/insights/show1/monthly"),
+      })
+    );
+  });
+
+  test("getEpisodeAnalyticsMonthly returns episode monthly data", async () => {
+    axios.mockResolvedValue({ data: { monthly: { "2026-01": 50 } } });
+
+    const result = await client.getEpisodeAnalyticsMonthly("show1", "ep1");
+
+    expect(result).toEqual({ monthly: { "2026-01": 50 } });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/insights/show1/monthly/ep1"),
+      })
+    );
+  });
+
+  test("getAnalyticsRange posts range query", async () => {
+    axios.mockResolvedValue({ data: { range: "data" } });
+
+    const params = { start: "2026-01-01", end: "2026-01-31", interval: "1d" };
+    const result = await client.getAnalyticsRange("show1", params);
+
+    expect(result).toEqual({ range: "data" });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "post",
+        url: expect.stringContaining("/insights/show1/range"),
+        data: params,
+      })
+    );
+  });
+
+  test("getEpisodeAnalyticsRange posts episode range query", async () => {
+    axios.mockResolvedValue({ data: { range: "episode_data" } });
+
+    const params = { start: "2026-01-01", end: "2026-01-31" };
+    const result = await client.getEpisodeAnalyticsRange("show1", "ep1", params);
+
+    expect(result).toEqual({ range: "episode_data" });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining("/insights/show1/range/ep1"),
+      })
+    );
+  });
+
+  test("getAnalyticsComparison posts episodes array", async () => {
+    axios.mockResolvedValue({ data: { comparison: "data" } });
+
+    const episodes = [{ id: "ep1", title: "Ep 1", published_date: "2026-01-01" }];
+    const result = await client.getAnalyticsComparison("show1", episodes);
+
+    expect(result).toEqual({ comparison: "data" });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "post",
+        url: expect.stringContaining("/insights/show1/compare"),
+        data: episodes,
+      })
+    );
+  });
+
+  test("getWebPlayerAnalytics posts web player query", async () => {
+    axios.mockResolvedValue({ data: { webPlayer: "data" } });
+
+    const params = { dateRange: { gte: "2026-01-01", lte: "2026-01-31" }, timezone: "America/New_York" };
+    const result = await client.getWebPlayerAnalytics("show1", "ep1", params);
+
+    expect(result).toEqual({ webPlayer: "data" });
+    expect(axios).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "post",
+        url: expect.stringContaining("/insights/show1/web-player/ep1"),
+      })
+    );
+  });
 });

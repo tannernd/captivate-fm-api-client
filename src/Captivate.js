@@ -10,6 +10,17 @@ const fs = require("fs");
  * @function Captivate#createEpisode
  * @function Captivate#listEpisodes
  * @function Captivate#uploadEpisode
+ * @function Captivate#getAnalyticsOverview
+ * @function Captivate#getEpisodeAnalyticsOverview
+ * @function Captivate#getAnalyticsAverages
+ * @function Captivate#getAnalyticsTotal
+ * @function Captivate#getEpisodeAnalyticsTotal
+ * @function Captivate#getAnalyticsMonthly
+ * @function Captivate#getEpisodeAnalyticsMonthly
+ * @function Captivate#getAnalyticsRange
+ * @function Captivate#getEpisodeAnalyticsRange
+ * @function Captivate#getAnalyticsComparison
+ * @function Captivate#getWebPlayerAnalytics
  */
 class Captivate {
   constructor(userId, apiKey) {
@@ -207,6 +218,293 @@ class Captivate {
     try {
       const response = await axios(config);
       this.token = response.data.user.token;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // ─── Analytics / Insights ───────────────────────────────────────────
+
+  /**
+   * Gets an overview of analytics for a show within a date range.
+   *
+   * @param {string} showId - The show ID.
+   * @param {string} start - Start date (YYYY-MM-DD).
+   * @param {string} end - End date (YYYY-MM-DD).
+   * @param {boolean} [includeTopEpisodes=true] - Include top episodes in the response.
+   * @returns {Promise<Object>} Overview analytics data.
+   */
+  async getAnalyticsOverview(showId, start, end, includeTopEpisodes = true) {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/overview`,
+      headers: { Authorization: `Bearer ${this.token}` },
+      params: { start, end, includeTopEpisodes },
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Gets an overview of analytics for a specific episode within a date range.
+   *
+   * @param {string} showId - The show ID.
+   * @param {string} episodeId - The episode ID.
+   * @param {string} start - Start date (YYYY-MM-DD).
+   * @param {string} end - End date (YYYY-MM-DD).
+   * @returns {Promise<Object>} Episode overview analytics data.
+   */
+  async getEpisodeAnalyticsOverview(showId, episodeId, start, end) {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/overview/${episodeId}`,
+      headers: { Authorization: `Bearer ${this.token}` },
+      params: { start, end },
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Gets average analytics for a show over a given interval.
+   *
+   * @param {string} showId - The show ID.
+   * @param {number} [intervalDays=28] - Number of days for the averaging interval.
+   * @returns {Promise<Object>} Average analytics data.
+   */
+  async getAnalyticsAverages(showId, intervalDays = 28) {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/averages`,
+      headers: { Authorization: `Bearer ${this.token}` },
+      params: { intervalDays },
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Gets the all-time total downloads for a show.
+   *
+   * @param {string} showId - The show ID.
+   * @returns {Promise<Object>} Total download data.
+   */
+  async getAnalyticsTotal(showId) {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/total`,
+      headers: { Authorization: `Bearer ${this.token}` },
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Gets the all-time total downloads for a specific episode.
+   *
+   * @param {string} showId - The show ID.
+   * @param {string} episodeId - The episode ID.
+   * @returns {Promise<Object>} Episode total download data.
+   */
+  async getEpisodeAnalyticsTotal(showId, episodeId) {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/total/${episodeId}`,
+      headers: { Authorization: `Bearer ${this.token}` },
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Gets month-by-month download analytics for a show.
+   *
+   * @param {string} showId - The show ID.
+   * @returns {Promise<Object>} Monthly analytics data.
+   */
+  async getAnalyticsMonthly(showId) {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/monthly`,
+      headers: { Authorization: `Bearer ${this.token}` },
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Gets month-by-month download analytics for a specific episode.
+   *
+   * @param {string} showId - The show ID.
+   * @param {string} episodeId - The episode ID.
+   * @returns {Promise<Object>} Episode monthly analytics data.
+   */
+  async getEpisodeAnalyticsMonthly(showId, episodeId) {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/monthly/${episodeId}`,
+      headers: { Authorization: `Bearer ${this.token}` },
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Gets analytics for a show within a custom date range with breakdowns.
+   *
+   * @param {string} showId - The show ID.
+   * @param {Object} params - Range query parameters.
+   * @param {string} params.start - Start date.
+   * @param {string} params.end - End date.
+   * @param {string} [params.interval='1d'] - Aggregation interval.
+   * @param {string} [params.timezone='America/New_York'] - Timezone for date calculations.
+   * @param {string|null} [params.countryCode=null] - Country code filter.
+   * @param {string[]} [params.types] - Breakdown types (e.g. byLocation, byUserAgentBrowser).
+   * @returns {Promise<Object>} Range analytics data.
+   */
+  async getAnalyticsRange(showId, params) {
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/range`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.token}`,
+      },
+      data: params,
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Gets analytics for a specific episode within a custom date range.
+   *
+   * @param {string} showId - The show ID.
+   * @param {string} episodeId - The episode ID.
+   * @param {Object} params - Range query parameters (same shape as getAnalyticsRange).
+   * @returns {Promise<Object>} Episode range analytics data.
+   */
+  async getEpisodeAnalyticsRange(showId, episodeId, params) {
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/range/${episodeId}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.token}`,
+      },
+      data: params,
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Compares analytics between multiple episodes.
+   *
+   * @param {string} showId - The show ID.
+   * @param {Array<{id: string, title: string, published_date: string}>} episodes - Episodes to compare.
+   * @returns {Promise<Object>} Comparison analytics data.
+   */
+  async getAnalyticsComparison(showId, episodes) {
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/compare`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.token}`,
+      },
+      data: episodes,
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Gets web player analytics for a specific episode.
+   *
+   * @param {string} showId - The show ID.
+   * @param {string} episodeId - The episode ID.
+   * @param {Object} params - Web player query parameters.
+   * @param {Object} params.dateRange - Date range with gte and lte properties.
+   * @param {string} [params.duration] - Duration filter.
+   * @param {string} [params.timezone='America/New_York'] - Timezone for date calculations.
+   * @returns {Promise<Object>} Web player analytics data.
+   */
+  async getWebPlayerAnalytics(showId, episodeId, params) {
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${this.apiBase}/insights/${showId}/web-player/${episodeId}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.token}`,
+      },
+      data: params,
+    };
+
+    try {
+      const response = await axios(config);
+      return response.data;
     } catch (error) {
       console.error(error);
     }
