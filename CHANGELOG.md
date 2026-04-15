@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2026-04-15
+
+### Fixed
+
+- Removed empty `Authorization: Bearer ` header from `authenticateUser()` — Captivate's auth endpoint rejects requests with an empty Bearer token
+
 ## [0.2.0] - 2026-04-15
 
 ### Added

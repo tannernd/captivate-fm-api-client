@@ -210,7 +210,6 @@ class Captivate {
       url: `${this.apiBase}/authenticate/token`,
       headers: {
         ...data.getHeaders(),
-        Authorization: `Bearer ${this.token}`,
       },
       data: data,
     };
