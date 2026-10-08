@@ -13,11 +13,12 @@ module.exports = [
     plugins: [resolve(), commonjs(), json()],
   },
   {
-    input: "src/index.js",
-    output: {
-      file: "dist/index.esm.js",
-      format: "esm",
-    },
+    input: "src/index.mjs",
+    output: [
+      { file: "dist/index.esm.js", format: "esm" },
+      // .mjs so Node treats it as ESM without "type": "module" in package.json.
+      { file: "dist/index.esm.mjs", format: "esm" },
+    ],
     plugins: [resolve(), commonjs(), json()],
   },
 ];
