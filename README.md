@@ -428,6 +428,8 @@ npm run smoke     # require() the CJS build and import() the ESM build
 
 The GitHub Actions workflow runs tests, the build, and smoke tests on every pull request and on every push to `main`. After a push to `main`, it publishes to npm **only if the `version` in `package.json` is not already on npm**. To release, bump `version` (and add a `CHANGELOG.md` entry) in the PR you merge.
 
+Publishing uses [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (GitHub Actions OIDC), so no npm token is stored in the repo. The package's trusted publisher on npmjs.com must name this repository and the workflow file `publish.yml`; renaming the workflow breaks publishing until that setting is updated.
+
 ---
 
 ## 🧪 Project Structure
