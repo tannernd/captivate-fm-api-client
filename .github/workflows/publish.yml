@@ -40,6 +40,11 @@ jobs:
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # npm Trusted Publishing: npm exchanges this job's OIDC token for a
+    # short-lived publish credential, so no NPM_TOKEN secret is needed.
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout code
@@ -65,6 +70,10 @@ jobs:
             echo "publish=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Upgrade npm for Trusted Publishing
+        if: steps.version.outputs.publish == 'true'
+        run: npm install -g npm@^11.5.1
+
       - name: Install dependencies
         if: steps.version.outputs.publish == 'true'
         run: npm ci
@@ -72,5 +81,3 @@ jobs:
       - name: Publish to npm
         if: steps.version.outputs.publish == 'true'
         run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -42,6 +42,7 @@
 
 - CI runs `npm ci`, the tests, the build, and smoke tests on pull requests and pushes to `main`.
 - CI publishes to npm only when the `package.json` version isn't already published.
+- CI publishes with npm Trusted Publishing (OIDC) instead of an `NPM_TOKEN` secret. Releases get provenance attestations automatically.
 - `npm test` no longer runs in watch mode; use `npm run test:watch`.
 
 
